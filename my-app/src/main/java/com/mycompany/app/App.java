@@ -28,27 +28,27 @@ public class App extends JFrame {
                 board[1][i] = new Piece(Color.BLACK, "Pawn");
                 board[6][i] = new Piece(Color.WHITE, "Pawn");
             }
-                        // Initialize other pieces...
-            board[0][0] = new Piece(Color.BLACK, "Black Rook"); // Black Rook
-            board[0][7] = new Piece(Color.BLACK, "Black Rook"); // Black Rook
-            board[7][0] = new Piece(Color.WHITE, "White Rook"); // White Rook
-            board[7][7] = new Piece(Color.WHITE, "White Rook"); // White Rook
+            // Initialize other pieces...
+            board[0][0] = new Piece(Color.BLACK, "Rook"); // Black Rook
+            board[0][7] = new Piece(Color.BLACK, "Rook"); // Black Rook
+            board[7][0] = new Piece(Color.WHITE, "Rook"); // White Rook
+            board[7][7] = new Piece(Color.WHITE, "Rook"); // White Rook
 
-            board[0][1] = new Piece(Color.BLACK, "Black Knight"); // Black Knight
-            board[0][6] = new Piece(Color.BLACK, "Black Knight"); // Black Knight
-            board[7][1] = new Piece(Color.WHITE, "White Knight"); // White Knight
-            board[7][6] = new Piece(Color.WHITE, "White Knight"); // White Knight
+            board[0][1] = new Piece(Color.BLACK, "Knight"); // Black Knight
+            board[0][6] = new Piece(Color.BLACK, "Knight"); // Black Knight
+            board[7][1] = new Piece(Color.WHITE, "Knight"); // White Knight
+            board[7][6] = new Piece(Color.WHITE, "Knight"); // White Knight
 
-            board[0][2] = new Piece(Color.BLACK, "Black Bishop"); // Black Bishop
-            board[0][5] = new Piece(Color.BLACK, "Black Bishop"); // Black Bishop
-            board[7][2] = new Piece(Color.WHITE, "White Bishop"); // White Bishop
-            board[7][5] = new Piece(Color.WHITE, "White Bishop"); // White Bishop
+            board[0][2] = new Piece(Color.BLACK, "Bishop"); // Black Bishop
+            board[0][5] = new Piece(Color.BLACK, "Bishop"); // Black Bishop
+            board[7][2] = new Piece(Color.WHITE, "Bishop"); // White Bishop
+            board[7][5] = new Piece(Color.WHITE, "Bishop"); // White Bishop
 
-            board[0][3] = new Piece(Color.BLACK, "Black Queen"); // Black Queen
-            board[7][3] = new Piece(Color.WHITE, "White Queen"); // White Queen
+            board[0][3] = new Piece(Color.BLACK, "Queen"); // Black Queen
+            board[7][3] = new Piece(Color.WHITE, "Queen"); // White Queen
 
-            board[0][4] = new Piece(Color.BLACK, "Black King"); // Black King
-            board[7][4] = new Piece(Color.WHITE, "White King"); // White King
+            board[0][4] = new Piece(Color.BLACK, "King"); // Black King
+            board[7][4] = new Piece(Color.WHITE, "King"); // White King
         }
 
         public Piece getPiece(int row, int col) {
@@ -99,6 +99,7 @@ public class App extends JFrame {
         square.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                boolean wasMoveValid = false; // New variable to track if a move was made
                 if (selectedRow == -1 && selectedCol == -1) {
                     if (piece != null && ((isWhiteTurn && piece.getColor() == Color.WHITE) ||
                             (!isWhiteTurn && piece.getColor() == Color.BLACK))) {
@@ -120,15 +121,27 @@ public class App extends JFrame {
                     if (isValidMove(selectedRow, selectedCol, row, col)) {
                         movePiece(selectedRow, selectedCol, row, col);
                         isWhiteTurn = !isWhiteTurn;
+                        wasMoveValid = true; // Move was valid
                     }
                     selectedRow = -1;
                     selectedCol = -1;
                     resetChessboard();
+
+                    // Reapply the highlighting if the move was not made
+                    if (!wasMoveValid) {
+                        square.setBackground(Color.YELLOW);
+                        for (int newRow = 0; newRow < 8; newRow++) {
+                            for (int newCol = 0; newCol < 8; newCol++) {
+                                if (isValidMove(selectedRow, selectedCol, newRow, newCol)) {
+                                    JPanel targetSquare = (JPanel) chessboardPanel.getComponent(newRow * 8 + newCol);
+                                    targetSquare.setBackground(Color.GREEN);
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
         });
-
         return square;
     }
 
